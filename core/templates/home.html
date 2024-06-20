@@ -1,0 +1,52 @@
+{% extends 'base.html' %} 
+{% load static %}
+{% block content %}
+
+{% for i in messages %}
+<div class="">
+  <h3 class="text-{{i.tags}} btn btn-primary disabled text-dark">{{i}}</h3>
+</div>
+{% endfor %}
+
+
+<div class="d-flex flex-wrap px-5 pt-3 align-items-center">
+
+  <div class="col-6">
+    <h1>Welcome to Bookish</h1>
+    <p>Welcome to Bookish, your ultimate online destination for book enthusiasts! Dive into our extensive collection featuring genres from fiction to self-help, and benefit from personalized recommendations, exclusive editions, and vibrant community events. Enjoy fast and reliable shipping, insightful user reviews, gift cards for your loved ones, and a rewarding loyalty program. At Bookish, we make discovering, sharing, and indulging in the joy of reading easier and more delightful. Embark on your next literary adventure with Bookish, where every book opens a world of possibilities!</p>
+  </div>
+  <div class="col-6">
+<img style="width: 90%;" src="{% static 'book.jpg' %}"/>
+  </div>
+</div>
+
+<div class="col-2 bg-white p-3 d-flex" >
+  <h5 class="btn btn-primary disabled">All Categories</h5>
+  {% for cat in genre %}
+  <div class="hudai">
+    <a class="btn btn-danger mx-2" href="{% url 'genre_wise_post' cat.slug %}" class="text-decoration-none text-dark" >{{cat.name}}</a>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="col-10 p-3">
+
+  <h4>{{data | length}} results found</h4>
+  <div class="d-flex flex-wrap pt-5">
+    {% for post in data %}
+    <div class="col-sm-3">
+      <div class="card m-2" style="width: 18rem;">
+        <div class="card-body">
+          <img src="{{ post.image.url }}" class="card-img-top" alt="...">
+          <h5 class="card-title">Title : {{post.title}}</h5>
+          <h5 class="card-title">Price : {{post.price}}$</h5>
+          <h5 class="card-title">Genre : {{post.author}}</h5>
+          <h5 class="card-title">In Stock : {{post.quantity}}</h5>
+          <a class="btn btn-dark" href="{% url 'book_details' post.id %}">View Details</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div> 
+{% endblock %}
