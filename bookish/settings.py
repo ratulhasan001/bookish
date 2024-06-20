@@ -140,10 +140,11 @@ SECRET_KEY = env("SECRET_KEY")
 ...
 
 
+# Replace the SQLite DATABASES configuration with PostgreSQL:
 DATABASES = {
     'default': dj_database_url.config(
-        default=env('postgres://bookish_jv54_user:KPlfx8eWwEM0GBJvG8WlTtQSsQ3ZkgA1@dpg-cpq87bhu0jms738r89k0-a.oregon-postgres.render.com/bookish_jv54'),
-        conn_max_age = 600
+        default='postgres://bookish_jv54_user:KPlfx8eWwEM0GBJvG8WlTtQSsQ3ZkgA1@dpg-cpq87bhu0jms738r89k0-a.oregon-postgres.render.com/bookish_jv54',
+        conn_max_age=600
     )
 }
 
