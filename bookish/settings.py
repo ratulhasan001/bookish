@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import environ
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -137,15 +138,13 @@ environ.Env.read_env()
 # Your secret key
 SECRET_KEY = env("SECRET_KEY")
 ...
+
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env("DB_NAME"),
-        'USER': env("DB_USER"),
-        'PASSWORD': env("DB_PASSWORD"),
-        'HOST': env("DB_HOST"),
-        'PORT': env("DB_PORT"),
-    }
+    'default': dj_database_url.config(
+        default=env('postgres://bookish_jv54_user:KPlfx8eWwEM0GBJvG8WlTtQSsQ3ZkgA1@dpg-cpq87bhu0jms738r89k0-a.oregon-postgres.render.com/bookish_jv54'),
+        conn_max_age = 600
+    )
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
