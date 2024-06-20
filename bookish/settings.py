@@ -156,4 +156,4 @@ EMAIL_HOST_USER = env("EMAIL")
 EMAIL_HOST_PASSWORD = env("EMAIL_PASSWORD")
 
 ALLOWED_HOSTS = ["*"] 
-CSRF_TRUSTED_ORIGINS = ['https://bookish-0ssu.onrender.com/','https://*.127.0.0.1'] 
+CSRF_TRUSTED_ORIGINS = ['https://bookish-0ssu.onrender.com','https://*.127.0.0.1'] 
