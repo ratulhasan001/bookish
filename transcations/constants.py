@@ -4,7 +4,7 @@ RETURN = 3
 
 
 TRANSACTION_TYPE = (
-    (DEPOSIT, 'Deposite'),
+    (DEPOSIT, 'Deposit'),
     (BORROW, 'Borrow'),
     (RETURN, 'Return'),
     
