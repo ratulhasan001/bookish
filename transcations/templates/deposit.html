@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% block head_title %}Deposit{% endblock %}
 {% load crispy_forms_tags %}
 {% block content %}
 
@@ -7,6 +8,7 @@
     <div class="col-md-6">
       <form class="m-2" method="post" style="border: 2px solid #ccc; padding: 20px; border-radius: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
         <h1 style="text-align: center;">Deposit Money</h1>
+        <p class="text-center text-muted">Current balance: {{ user.account.balance|default:"0.00" }}$</p>
         {% csrf_token %}
         {{ form | crispy }}
         <button type="submit" class="btn btn-warning mt-3">Submit</button>
