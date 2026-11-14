@@ -1,46 +1,67 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% block head_title %}{{ book.title }}{% endblock %}
 {% block content %}
 
-<div class="col-12 d-flex mt-2 pt-2" style="text-align: center;">
-    <div class="card m-2 col-md-4">
-        <div class="card-body">
-            <img src="{{book.image.url}}" class="card-img-top" alt="..." style="width:50%;">
-        </div>
-    </div>
-    <div class="col-md-4">
-        <h4>Title : {{book.title}}</h4>
-        <h4>Price: {{book.price}} $</h4>
-        <h4>Remaining: {{book.quantity}}</h4>
-        {% if request.user.is_authenticated %}
-        <a class="btn btn-primary mx-2" aria-current="page" href="{% url 'borrow_book' book.id %}">Borrow</a>
-        {% endif %}
-    </div>
-</div>
-
-<div class="card m-2">
-    <h5 class="p-3">Total Comments : {{ reviews | length}}</h5>
-    {% for review in reviews %}
-  <div class="card-body border m-2">
-        <p><b>{{review.name}}</b> {{review.created_on}}</p>
-        <p>{{review.body}}</p>
-    </div>
-    {% endfor %}
-</div>
-{% if request.user.is_authenticated and user_has_borrowed %}
 <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="card-body">
-        <form class="m-2" method="post" style="border: 2px solid #ccc; padding: 20px; border-radius: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-            <h1 style="text-align: center;">Add Review</h1>
+  <div class="row mt-2 pt-2">
+    <div class="col-md-4 text-center">
+      {% if book.image %}
+      <img src="{{ book.image.url }}" class="img-fluid rounded" alt="Cover of {{ book.title }}" style="max-height: 420px;">
+      {% endif %}
+    </div>
+    <div class="col-md-8">
+      <h2 class="h3">{{ book.title }}</h2>
+      <p class="text-muted">by {{ book.author }}</p>
+      <p>{% for g in book.genres.all %}<span class="badge bg-danger me-1">{{ g.name }}</span>{% endfor %}</p>
+      <p>{{ book.description|linebreaksbr }}</p>
+      <h5>Price: {{ book.price }} $</h5>
+      <h5>Remaining: {{ book.quantity }}</h5>
+      {% if request.user.is_authenticated %}
+        {% if user_has_borrowed %}
+          <p class="text-success">You have borrowed this book. <a href="{% url 'profile' %}">Return it from your profile.</a></p>
+        {% elif book.quantity < 1 %}
+          <button type="button" class="btn btn-secondary" disabled>Out of stock</button>
+        {% elif user.account.balance < book.price %}
+          <button type="button" class="btn btn-warning" disabled>Insufficient balance</button>
+          <a href="{% url 'deposit_money' %}" class="btn btn-link">Deposit money</a>
+        {% else %}
+          <form method="post" action="{% url 'borrow_book' book.id %}" class="d-inline">
             {% csrf_token %}
-            {{ReviewForm | crispy}}
-            <button class="btn btn-warning">Submit</button>
-        </div>
+            <button type="submit" class="btn btn-primary">Borrow for {{ book.price }}$</button>
+          </form>
+        {% endif %}
+      {% else %}
+        <a class="btn btn-outline-primary" href="{% url 'user_login' %}?next={% url 'book_details' book.id %}">Log in to borrow</a>
+      {% endif %}
     </div>
-    </div>
-</div>
-{% endif %}
+  </div>
 
+  <div class="card my-3">
+    <h5 class="p-3 mb-0">Reviews ({{ reviews|length }})</h5>
+    {% for review in reviews %}
+    <div class="card-body border-top">
+      <p class="mb-1"><b>{{ review.name }}</b> <small class="text-muted">{{ review.created_on|date:"M d, Y H:i" }}</small></p>
+      <p class="mb-0">{{ review.body|linebreaksbr }}</p>
+    </div>
+    {% empty %}
+    <div class="card-body border-top text-muted">No reviews yet.</div>
+    {% endfor %}
+  </div>
+
+  {% if request.user.is_authenticated and user_has_borrowed %}
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <form class="card card-body m-2" method="post">
+        <h2 class="h4 text-center">Add Review</h2>
+        {% csrf_token %}
+        {{ ReviewForm|crispy }}
+        <button class="btn btn-warning">Submit</button>
+      </form>
+    </div>
+  </div>
+  {% else %}
+  <p class="text-center text-muted">Only readers who have borrowed this book can review it.</p>
+  {% endif %}
+</div>
 {% endblock %}
