@@ -1,7 +1,6 @@
-from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
+
 from . import views
-from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('register/', views.register, name='register'),
@@ -10,5 +9,5 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('profile/edit', views.edit_profile, name='edit_profile'),
     path('profile/edit/pass_change/', views.pass_change, name='pass_change'),
-    path("profile/return_book/<int:id>/", views.return_book , name='return_book'),
+    path("profile/return_book/<int:id>/", views.return_book, name='return_book'),
 ]
