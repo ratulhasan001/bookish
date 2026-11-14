@@ -15,3 +15,6 @@ venv/
 # Editor / OS
 .vscode
 .DS_Store
+
+# Uploaded media
+/media/
