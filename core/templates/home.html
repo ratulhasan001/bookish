@@ -1,52 +1,54 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
 {% load static %}
+{% block head_title %}{% if selected_genre %}{{ selected_genre.name }}{% else %}Home{% endif %}{% endblock %}
 {% block content %}
 
-{% for i in messages %}
-<div class="">
-  <h3 class="text-{{i.tags}} btn btn-primary disabled text-dark">{{i}}</h3>
-</div>
-{% endfor %}
-
-
-<div class="d-flex flex-wrap px-5 pt-3 align-items-center">
-
-  <div class="col-6">
-    <h1>Welcome to Bookish</h1>
-    <p>Welcome to Bookish, your ultimate online destination for book enthusiasts! Dive into our extensive collection featuring genres from fiction to self-help, and benefit from personalized recommendations, exclusive editions, and vibrant community events. Enjoy fast and reliable shipping, insightful user reviews, gift cards for your loved ones, and a rewarding loyalty program. At Bookish, we make discovering, sharing, and indulging in the joy of reading easier and more delightful. Embark on your next literary adventure with Bookish, where every book opens a world of possibilities!</p>
+<div class="container">
+  <div class="row align-items-center pt-3">
+    <div class="col-md-6">
+      <h1 class="h2">Welcome to Bookish</h1>
+      <p>Bookish is a small book borrowing site. Add money to your balance, borrow a book (its price is taken from your balance), and get a full refund when you return it. Readers who have borrowed a book can leave a review.</p>
+      {% if not user.is_authenticated %}
+      <a class="btn btn-dark" href="{% url 'register' %}">Create an account</a>
+      {% endif %}
+    </div>
+    <div class="col-md-6 text-center">
+      <img style="width: 90%;" src="{% static 'book.jpg' %}" alt="Books on a shelf"/>
+    </div>
   </div>
-  <div class="col-6">
-<img style="width: 90%;" src="{% static 'book.jpg' %}"/>
+
+  <div class="d-flex flex-wrap align-items-center gap-2 bg-white py-3">
+    <span class="fw-bold me-2">Genres:</span>
+    <a class="btn btn-sm {% if not selected_genre %}btn-danger{% else %}btn-outline-danger{% endif %}" href="{% url 'homepage' %}">All</a>
+    {% for cat in genre %}
+    <a class="btn btn-sm {% if selected_genre == cat %}btn-danger{% else %}btn-outline-danger{% endif %}" href="{% url 'genre_wise_post' cat.slug %}">{{ cat.name }}</a>
+    {% empty %}
+    <span class="text-muted small">No genres yet</span>
+    {% endfor %}
   </div>
-</div>
 
-<div class="col-2 bg-white p-3 d-flex" >
-  <h5 class="btn btn-primary disabled">All Categories</h5>
-  {% for cat in genre %}
-  <div class="hudai">
-    <a class="btn btn-danger mx-2" href="{% url 'genre_wise_post' cat.slug %}" class="text-decoration-none text-dark" >{{cat.name}}</a>
-  </div>
-  {% endfor %}
-</div>
-
-<div class="col-10 p-3">
-
-  <h4>{{data | length}} results found</h4>
-  <div class="d-flex flex-wrap pt-5">
+  <h4 class="mt-2">{{ data|length }} book{{ data|length|pluralize }} found{% if selected_genre %} in {{ selected_genre.name }}{% endif %}</h4>
+  <div class="row pt-3">
     {% for post in data %}
-    <div class="col-sm-3">
-      <div class="card m-2" style="width: 18rem;">
+    <div class="col-sm-6 col-lg-3 mb-4">
+      <div class="card h-100">
+        {% if post.image %}
+        <img src="{{ post.image.url }}" class="card-img-top" alt="Cover of {{ post.title }}" style="height: 260px; object-fit: cover;">
+        {% endif %}
         <div class="card-body">
-          <img src="{{ post.image.url }}" class="card-img-top" alt="...">
-          <h5 class="card-title">Title : {{post.title}}</h5>
-          <h5 class="card-title">Price : {{post.price}}$</h5>
-          <h5 class="card-title">Genre : {{post.author}}</h5>
-          <h5 class="card-title">In Stock : {{post.quantity}}</h5>
+          <h5 class="card-title">{{ post.title }}</h5>
+          <p class="card-text mb-1">Author: {{ post.author }}</p>
+          <p class="card-text mb-1">Price: {{ post.price }}$</p>
+          <p class="card-text">{% if post.quantity > 0 %}In stock: {{ post.quantity }}{% else %}<span class="badge bg-secondary">Out of stock</span>{% endif %}</p>
           <a class="btn btn-dark" href="{% url 'book_details' post.id %}">View Details</a>
         </div>
       </div>
     </div>
+    {% empty %}
+    <div class="col-12">
+      <div class="alert alert-light border text-center">No books{% if selected_genre %} in this genre{% endif %} yet. Staff can add books in the admin.</div>
+    </div>
     {% endfor %}
   </div>
-</div> 
+</div>
 {% endblock %}
