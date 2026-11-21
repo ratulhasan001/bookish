@@ -63,7 +63,7 @@ class DepositView(AccountMixin, CreateView):
 
 class TransactionReportView(AccountMixin, ListView):
     model = Transaction
-    template_name = 'transcation_report.html'
+    template_name = 'transaction_report.html'
 
     def get_queryset(self):
         queryset = super().get_queryset().filter(account=self.get_account())
